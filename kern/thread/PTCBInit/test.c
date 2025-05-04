@@ -4,6 +4,11 @@
 #include <thread/PTCBIntro/export.h>
 #include "export.h"
 
+/**
+ * Test 1: Verify that all TCBs are initialized correctly.
+ * - Checks if the state of each TCB is TSTATE_DEAD.
+ * - Checks if the prev and next pointers in each TCB are set to NUM_IDS.
+ */
 int PTCBInit_test1()
 {
     unsigned int i;
@@ -37,11 +42,21 @@ int PTCBInit_test1()
  */
 int PTCBInit_test_own()
 {
-    // TODO (optional)
-    // dprintf("own test passed.\n");
+    // Example test: Verify that tcb_set_state works correctly.
+    tcb_set_state(1, TSTATE_RUN); // Use TSTATE_RUN instead of TSTATE_RUNNING
+    if (tcb_get_state(1) != TSTATE_RUN) {
+        dprintf("own test 2 failed: tcb_set_state did not work correctly\n");
+        return 1;
+    }
+    // Reset the state to TSTATE_DEAD to avoid affecting other tests.
+    tcb_set_state(1, TSTATE_DEAD);
+
+    dprintf("own test passed.\n");
     return 0;
 }
-
+/**
+ * Run all tests for PTCBInit.
+ */
 int test_PTCBInit()
 {
     return PTCBInit_test1() + PTCBInit_test_own();

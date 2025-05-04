@@ -2,6 +2,7 @@
 #include <lib/types.h>
 #include <lib/monitor.h>
 #include <thread/PThread/export.h>
+#include <kern/ipc/pubsub.h> // Include the Pub/Sub IPC header
 
 #ifdef TEST
 extern bool test_PKCtxNew(void);
@@ -9,6 +10,11 @@ extern bool test_PTCBInit(void);
 extern bool test_PTQueueInit(void);
 extern bool test_PThread(void);
 #endif
+
+// Subscriber callback for testing
+void testCallback(struct Message *msg) {
+    dprintf("Subscriber received message: %s\n", msg->data);
+}
 
 static void kern_main(void)
 {
@@ -46,6 +52,13 @@ static void kern_main(void)
         dprintf("Test failed.\n");
     }
     dprintf("\n");
+
+    // Test the Pub/Sub IPC system
+    dprintf("Testing the Pub/Sub IPC system...\n");
+    subscribe("test_topic", testCallback); // Subscribe to a topic
+    publish("test_topic", "Hello,Pub/Sub IPC!"); // Publish a message
+    dprintf("Pub/Sub IPC test complete.\n");
+
     dprintf("\nTest complete. Please Use Ctrl-a x to exit qemu.");
 #else
     monitor(NULL);

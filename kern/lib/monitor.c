@@ -12,6 +12,9 @@
 #include <dev/console.h>
 #include <vmm/MPTIntro/export.h>
 #include <vmm/MPTNew/export.h>
+#include <kern/ipc/pubsub.h> // Include the Pub/Sub IPC header
+#include <kern/ipc/publisher.c>
+#include <kern/ipc/subscriber.c>
 
 #define CMDBUF_SIZE 80  // enough for one VGA text line
 
@@ -22,10 +25,59 @@ struct Command {
     int (*func)(int argc, char **argv, struct Trapframe *tf);
 };
 
+// Subscriber callback for testing
+void pubsub_callback(struct Message *msg) {
+    dprintf("Received message: %s\n", msg->data); // Replace cprintf with dprintf
+}
+// Pub/Sub command
+int mon_pubsub(int argc, char **argv, struct Trapframe *tf) {
+    if (argc < 2) {
+        dprintf("Usage: pubsub <publish|subscribe> <topic> [message]\n");
+        return 0;
+    }
+
+    if (strcmp(argv[1], "publish") == 0) {
+        if (argc < 4) {
+            dprintf("Usage: pubsub publish <topic> <message>\n");
+            return 0;
+        }
+        publish(argv[2], argv[3]);
+        dprintf("Published message to topic '%s': %s\n", argv[2], argv[3]);
+    } else if (strcmp(argv[1], "subscribe") == 0) {
+        if (argc < 3) {
+            dprintf("Usage: pubsub subscribe <topic>\n");
+            return 0;
+        }
+        subscribe(argv[2], pubsub_callback);
+        dprintf("Subscribed to topic '%s'\n", argv[2]);
+    } else {
+        dprintf("Unknown command: %s\n", argv[1]);
+    }
+
+    return 0;
+}
+
+
+// Test function for Pub/Sub
+int mon_test_pubsub(int argc, char **argv, struct Trapframe *tf) {
+    // Subscribe to a test topic
+    subscribe("test_topic", pubsub_callback);
+    dprintf("Subscribed to 'test_topic'\n");
+
+    // Publish a message to the test topic
+    publish("test_topic", "Hello, this is a test message!");
+    dprintf("Published message to 'test_topic'\n");
+
+    return 0;
+}
+
+// Add the test command to the commands array
 static struct Command commands[] = {
     {"help", "Display this list of commands", mon_help},
     {"kerninfo", "Display information about the kernel", mon_kerninfo},
     {"startuser", "Start the user idle process", mon_start_user},
+    {"pubsub", "Publish/Subscribe IPC commands", mon_pubsub},
+    {"test_pubsub", "Test the Pub/Sub IPC system", mon_test_pubsub}, // Add this line
 };
 
 #define NCOMMANDS (sizeof(commands) / sizeof(commands[0]))

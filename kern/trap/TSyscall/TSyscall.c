@@ -15,6 +15,7 @@ static char sys_buf[NUM_IDS][PAGESIZE];
  */
 void sys_puts(void)
 {
+    
     unsigned int cur_pid;
     unsigned int str_uva, str_len;
     unsigned int remain, cur_pos, nbytes;

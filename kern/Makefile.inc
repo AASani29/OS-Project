@@ -61,3 +61,12 @@ $(KERN_OBJDIR)/kernel: $(KERN_OBJFILES) $(KERN_BINFILES)
 	$(V)$(OBJCOPY) --remove-section .note.gnu.property $@.bak $@
 	$(V)$(OBJDUMP) -S $@ > $@.asm
 	$(V)$(NM) -n $@ > $@.sym
+
+
+# Add Pub/Sub IPC source files
+KERN_SRCS += kern/ipc/pubsub.h
+KERN_SRCS += kern/ipc/topic.c
+KERN_SRCS += kern/ipc/queue.c
+KERN_SRCS += kern/ipc/publisher.c
+KERN_SRCS += kern/ipc/subscriber.c
+

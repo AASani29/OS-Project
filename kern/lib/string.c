@@ -92,6 +92,22 @@ char *strchr(const char *s, char c)
     return 0;
 }
 
+char *strncpy(char *dest, const char *src, size_t n) {
+    size_t i;
+
+    // Copy up to n characters from src to dest
+    for (i = 0; i < n && src[i] != '\0'; i++) {
+        dest[i] = src[i];
+    }
+
+    // If n is greater than the length of src, pad the rest of dest with null bytes
+    for (; i < n; i++) {
+        dest[i] = '\0';
+    }
+
+    return dest;
+}
+
 void *memzero(void *v, size_t n)
 {
     return memset(v, 0, n);
