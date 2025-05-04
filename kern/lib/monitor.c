@@ -70,6 +70,11 @@ int mon_test_pubsub(int argc, char **argv, struct Trapframe *tf) {
 
     return 0;
 }
+// kern/lib/monitor.c
+int mon_list_topics(int argc, char **argv, struct Trapframe *tf) {
+    list_topics();  // Call the new function
+    return 0;
+}
 
 // Add the test command to the commands array
 static struct Command commands[] = {
@@ -78,6 +83,7 @@ static struct Command commands[] = {
     {"startuser", "Start the user idle process", mon_start_user},
     {"pubsub", "Publish/Subscribe IPC commands", mon_pubsub},
     {"test_pubsub", "Test the Pub/Sub IPC system", mon_test_pubsub}, // Add this line
+    {"list_topics", "Show active Pub/Sub topics", mon_list_topics}, // New entry
 };
 
 #define NCOMMANDS (sizeof(commands) / sizeof(commands[0]))

@@ -31,3 +31,14 @@ struct Topic *create_topic(const char *name) {
     return topic;
 }
 
+
+// kern/ipc/pubsub.c
+void list_topics(void) {
+    dprintf("Active topics:\n");
+    for (int i = 0; i < num_topics; i++) {
+        dprintf("- %s (%d subscriber%s)\n", 
+               topics[i].name, 
+               topics[i].num_subscribers,
+               topics[i].num_subscribers == 1 ? "" : "s");
+    }
+}

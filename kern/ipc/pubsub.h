@@ -36,5 +36,5 @@ struct Topic *create_topic(const char *name);
 void enqueue_message(struct Topic *topic, const char *data);
 void publish(const char *topic_name, const char *message_data);
 void subscribe(const char *topic_name, void (*callback)(struct Message *));
-
+void list_topics(void);
 #endif // KERN_IPC_PUBSUB_H
