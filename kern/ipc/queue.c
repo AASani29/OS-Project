@@ -28,3 +28,25 @@ void dequeue_message(struct Topic *topic) {
         topic->count--;
     }
 }
+
+// kern/ipc/pubsub.c
+void show_queue(const char *topic_name) {
+    struct Topic *topic = find_topic(topic_name);
+    if (!topic) {
+        dprintf("Topic '%s' not found\n", topic_name);
+        return;
+    }
+
+    if (topic->count == 0) {
+        dprintf("Queue for '%s' is empty\n", topic_name);
+        return;
+    }
+
+    dprintf("Messages in '%s' (%d/%d):\n", 
+           topic_name, topic->count, MAX_QUEUE_SIZE);
+    
+    for (int i = 0; i < topic->count; i++) {
+        int idx = (topic->head + i) % MAX_QUEUE_SIZE;
+        dprintf("[%02d] %s\n", i+1, topic->queue[idx].data);
+    }
+}
